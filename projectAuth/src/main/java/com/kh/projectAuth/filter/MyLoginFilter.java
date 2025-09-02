@@ -34,6 +34,8 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
             ObjectMapper om = new ObjectMapper();
             MemberDto dto = om.readValue(request.getInputStream(), MemberDto.class);
 
+            System.out.println("dto.getUserId() = " + dto.getUserId());
+            System.out.println("dto.getUserPwd() = " + dto.getUserPwd());
             Authentication authToken = new UsernamePasswordAuthenticationToken(dto.getUserId(), dto.getUserPwd());
 
             return authenticationManager.authenticate(authToken);

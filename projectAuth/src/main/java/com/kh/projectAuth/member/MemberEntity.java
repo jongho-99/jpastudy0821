@@ -4,6 +4,7 @@ import com.kh.projectAuth.department.DepartmentEntity;
 import com.kh.projectAuth.role.RoleEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -11,19 +12,20 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "MEMBER")
 @Getter
+@ToString
 public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long no;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String userId;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 100)
     private String userPwd;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String userNick;
 
     @ManyToOne(fetch = FetchType.LAZY)

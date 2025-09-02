@@ -17,16 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberApiController {
 
     private final MemberService memberService;
-    private final MyUserDetailsService myUserDetailsService;
 
     @PostMapping("join")
     public ResponseEntity<Integer> join(@RequestBody MemberDto dto) {
          int result = memberService.join(dto);
 
          if(result == 1) {
-             return ResponseEntity.badRequest().body(0);
-         } else {
              return ResponseEntity.ok().body(1);
+         } else {
+             return ResponseEntity.badRequest().body(0);
          }
     }
 

@@ -46,6 +46,7 @@ public class MemberService implements UserDetailsService {
 
             MemberEntity entity = MemberEntity.from(dto, dEntity, rEntity);
 
+            System.out.println("entity = " + entity);
             memberRepository.join(entity);
 
         } catch (Exception e) {
@@ -55,6 +56,9 @@ public class MemberService implements UserDetailsService {
         return 1;
 
     }
+
+
+
 
     //JWT 처리 방식 로그인은 MyUserDetailsService에서 처리
 //    public MemberEntity login(MemberDto dto) {

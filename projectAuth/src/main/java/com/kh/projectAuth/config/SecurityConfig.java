@@ -44,29 +44,24 @@ public class SecurityConfig {
 
         //csrf disable
         http.csrf(auth -> auth.disable());
-
         //form 로그인 방식 disable
         http.formLogin(auth -> auth.disable());
-
         //http basic 인증 방식 disable
         http.httpBasic(auth -> auth.disable());
-
         //세션 설정
         http.sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
         //경로별 인가 작업
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/", "/join").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/member/login", "/", "/api/member/join").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
-
         //필터 갈아끼우기
         AuthenticationManager authenticationManager = authenticationManager();
 
         //MyLoginFilter를 SecurityFilterChain에 등록해주는 작업
         MyLoginFilter myLoginFilter = new MyLoginFilter(authenticationManager, myJwtUtil);
-        myLoginFilter.setFilterProcessesUrl("/login");
+        myLoginFilter.setFilterProcessesUrl("/api/member/login");
         http.addFilterAt(myLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
         //CORS
