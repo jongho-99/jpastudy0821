@@ -1,5 +1,7 @@
 package com.kh.projectAuth.member;
 
+import com.kh.projectAuth.department.DepartmentEntity;
+import com.kh.projectAuth.role.RoleEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,8 +26,14 @@ public class MemberEntity {
     @Column(nullable = false, length = 20)
     private String userNick;
 
-    @Column(nullable = false)
-    private String role;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="roleNo", nullable = false)
+    private RoleEntity role;
+
+    //부서코드
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="departmentNo", nullable = false)
+    private DepartmentEntity department;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -34,17 +42,17 @@ public class MemberEntity {
     private String delYn;
 
     //업체 고유토큰
+    @Column(nullable = false)
     private String companyToken;
 
-    //부서코드
-    private Long departmentNo;
+
 
     public MemberEntity() {
         delYn = "N";
         createdAt = LocalDateTime.now();
     }
 
-    public static MemberEntity from(MemberDto dto) {
+    public static MemberEntity from(MemberDto dto, DepartmentEntity dEntity, RoleEntity rEntity) {
 
         MemberEntity entity = new MemberEntity();
 
@@ -58,11 +66,10 @@ public class MemberEntity {
         entity.userPwd = bc.encode(dto.getUserPwd());
         entity.userNick = dto.getUserNick();
 
-        entity.role = dto.getRole();
-
         entity.companyToken = dto.getCompanyToken();
-        entity.departmentNo = dto.getDepartmentNo();
 
+        entity.department = dEntity;
+        entity.role = rEntity;
         return entity;
     }
 

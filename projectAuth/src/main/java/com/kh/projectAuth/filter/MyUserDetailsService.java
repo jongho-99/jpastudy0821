@@ -1,5 +1,6 @@
 package com.kh.projectAuth.filter;
 
+import com.kh.projectAuth.member.MemberDto;
 import com.kh.projectAuth.member.MemberEntity;
 import com.kh.projectAuth.member.MemberRepository;
 import com.kh.projectAuth.security.MyUserDetails;
@@ -19,8 +20,12 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        MemberEntity entity = memberRepository.login(username);
-        MyUserDetails myUserDetails = new MyUserDetails(entity);
+
+        MemberEntity find_entity = memberRepository.findUserById(username);
+
+        MemberEntity entity = memberRepository.login(find_entity);
+        MemberDto dto = MemberDto.from(entity);
+        MyUserDetails myUserDetails = new MyUserDetails(dto);
         return myUserDetails;
     }
 }

@@ -1,5 +1,8 @@
 package com.kh.projectAuth.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kh.projectAuth.member.MemberDto;
+import com.kh.projectAuth.security.MyJwtUtil;
 import com.kh.projectAuth.security.MyUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,22 +15,33 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final MyJwtUtil myJwtUtil;
 
 
     //로그인 시도
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
 
-        System.out.println("MyLoginFilter.attemptAuthentication");
+        try{
+            System.out.println("MyLoginFilter.attemptAuthentication");
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken("user01", "1234", null);
+            ObjectMapper om = new ObjectMapper();
+            MemberDto dto = om.readValue(request.getInputStream(), MemberDto.class);
 
-        return authenticationManager.authenticate(authToken);
+            Authentication authToken = new UsernamePasswordAuthenticationToken(dto.getUserId(), dto.getUserPwd());
+
+            return authenticationManager.authenticate(authToken);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 
@@ -41,9 +55,12 @@ public class MyLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String userId = userDetails.getUsername();
         String userNick = userDetails.getUserNick();
-        String userRole = userDetails.getUserRole();
+        String userRoleName = userDetails.getUserRoleName();
+        String userDepartmentName = userDetails.getUserDepartmentName();
 
-        String jwt = myJwtUtil.createJWT(userId, userNick, userRole);
+        LocalDateTime userCreatedAt = userDetails.getUserCreatedAt();
+
+        String jwt = myJwtUtil.createJwt(userId, userNick, userRoleName, userDepartmentName, userCreatedAt);
         response.addHeader("Authorization", "Bearer " + jwt);
 
     }
